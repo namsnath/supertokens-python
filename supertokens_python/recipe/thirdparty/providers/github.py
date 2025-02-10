@@ -22,8 +22,8 @@ from supertokens_python.recipe.thirdparty.providers.utils import (
 )
 from supertokens_python.recipe.thirdparty.types import UserInfo, UserInfoEmail
 
-from .custom import GenericProvider, NewProvider
 from ..provider import Provider, ProviderConfigForClient, ProviderInput
+from .custom import GenericProvider, NewProvider
 
 
 class GithubImpl(GenericProvider):
@@ -47,7 +47,9 @@ class GithubImpl(GenericProvider):
 
         raw_response = {}
 
-        email_info: List[Any] = await do_get_request("https://api.github.com/user/emails", headers=headers)  # type: ignore
+        email_info: List[Any] = await do_get_request(
+            "https://api.github.com/user/emails", headers=headers
+        )  # type: ignore
         user_info = await do_get_request("https://api.github.com/user", headers=headers)
 
         raw_response["emails"] = email_info
