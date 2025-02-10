@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     rm ./.git/hooks/pre-commit
     make set-up-hooks
     ```
+    - For IDEs with git integration: Install `pyright` globally to ensure hooks run
 
 ## [0.27.0] - 2024-12-30
 
