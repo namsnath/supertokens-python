@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.28.0]
+- **[Breaking] Updates pre-commit hooks to use `pre-commit`**
+  - Migration:
+    ```bash
+    rm ./.git/hooks/pre-commit
+    make set-up-hooks
+    ```
+
 ## [0.27.0] - 2024-12-30
 
 - Added OAuth2Provider recipe
