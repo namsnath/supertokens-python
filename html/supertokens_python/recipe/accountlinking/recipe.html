@@ -2039,10 +2039,6 @@ inheritance.</p></div>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="supertokens_python.recipe.accountlinking.recipe.AccountLinkingRecipe.get_tenant_id"><code class="name">var <span class="ident">get_tenant_id</span> : Optional[Callable[[str, Dict[str, Any]], Awaitable[str]]]</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
 <dt id="supertokens_python.recipe.accountlinking.recipe.AccountLinkingRecipe.recipe_id"><code class="name">var <span class="ident">recipe_id</span></code></dt>
 <dd>
 <div class="desc"></div>
@@ -2177,7 +2173,7 @@ in account take over if this recipe user is malicious.</li>
 </dd>
 <dt id="supertokens_python.recipe.accountlinking.recipe.EmailChangeAllowedResult"><code class="flex name class">
 <span>class <span class="ident">EmailChangeAllowedResult</span></span>
-<span>(</span><span>allowed: bool, reason: "Literal[('OK', 'PRIMARY_USER_CONFLICT', 'ACCOUNT_TAKEOVER_RISK')]")</span>
+<span>(</span><span>allowed: bool, reason: "Literal['OK', 'PRIMARY_USER_CONFLICT', 'ACCOUNT_TAKEOVER_RISK']")</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -2199,7 +2195,7 @@ in account take over if this recipe user is malicious.</li>
 </dd>
 <dt id="supertokens_python.recipe.accountlinking.recipe.TryLinkingByAccountInfoOrCreatePrimaryUserResult"><code class="flex name class">
 <span>class <span class="ident">TryLinkingByAccountInfoOrCreatePrimaryUserResult</span></span>
-<span>(</span><span>status: "Literal[('OK', 'NO_LINK')]", user: Optional[User])</span>
+<span>(</span><span>status: "Literal['OK', 'NO_LINK']", user: Optional[User])</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -2237,7 +2233,6 @@ in account take over if this recipe user is malicious.</li>
 <li><code><a title="supertokens_python.recipe.accountlinking.recipe.AccountLinkingRecipe.get_instance" href="#supertokens_python.recipe.accountlinking.recipe.AccountLinkingRecipe.get_instance">get_instance</a></code></li>
 <li><code><a title="supertokens_python.recipe.accountlinking.recipe.AccountLinkingRecipe.get_oldest_user_that_can_be_linked_to_recipe_user" href="#supertokens_python.recipe.accountlinking.recipe.AccountLinkingRecipe.get_oldest_user_that_can_be_linked_to_recipe_user">get_oldest_user_that_can_be_linked_to_recipe_user</a></code></li>
 <li><code><a title="supertokens_python.recipe.accountlinking.recipe.AccountLinkingRecipe.get_primary_user_that_can_be_linked_to_recipe_user_id" href="#supertokens_python.recipe.accountlinking.recipe.AccountLinkingRecipe.get_primary_user_that_can_be_linked_to_recipe_user_id">get_primary_user_that_can_be_linked_to_recipe_user_id</a></code></li>
-<li><code><a title="supertokens_python.recipe.accountlinking.recipe.AccountLinkingRecipe.get_tenant_id" href="#supertokens_python.recipe.accountlinking.recipe.AccountLinkingRecipe.get_tenant_id">get_tenant_id</a></code></li>
 <li><code><a title="supertokens_python.recipe.accountlinking.recipe.AccountLinkingRecipe.handle_api_request" href="#supertokens_python.recipe.accountlinking.recipe.AccountLinkingRecipe.handle_api_request">handle_api_request</a></code></li>
 <li><code><a title="supertokens_python.recipe.accountlinking.recipe.AccountLinkingRecipe.handle_error" href="#supertokens_python.recipe.accountlinking.recipe.AccountLinkingRecipe.handle_error">handle_error</a></code></li>
 <li><code><a title="supertokens_python.recipe.accountlinking.recipe.AccountLinkingRecipe.init" href="#supertokens_python.recipe.accountlinking.recipe.AccountLinkingRecipe.init">init</a></code></li>
