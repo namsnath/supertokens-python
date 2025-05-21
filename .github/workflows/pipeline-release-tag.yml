@@ -69,7 +69,11 @@ jobs:
             https://api.github.com/repos/${{ github.repository }}/commits/tags/${{ needs.setup.outputs.devTag }}/status
           )
 
-          if [[ echo "$response" | jq .state != "success" ]]; then
+          state=$(echo "$response" | jq .state)
+
+          echo $state
+
+          if [[ $state != "success" ]]; then
             echo "Some checks not passed, cannot release."
             exit 1
           fi
