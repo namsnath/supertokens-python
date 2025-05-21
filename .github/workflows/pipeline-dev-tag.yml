@@ -36,9 +36,11 @@ jobs:
       - name: Check if branch needs master merge
         run: |
           git fetch origin master
-          echo "[$(git log origin/master ^HEAD)]"
+          git status
+          echo "[$(git log --oneline HEAD..master)]"
+          # echo "[$(git log master ^HEAD)]"
 
-          if [[ $(git log origin/master ^HEAD) != "" ]]; then
+          if [[ $(git log master ^HEAD) != "" ]]; then
             echo "You need to merge master into this branch."
             exit 1
           fi
