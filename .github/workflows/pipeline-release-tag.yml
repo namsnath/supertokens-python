@@ -100,10 +100,8 @@ jobs:
           fetch-tags: true
           # token: ${{ secrets.repo_PAT }}
 
-      - name: Setup
+      - name: Setup git
         run: |
-          make dev-install
-
           # NOTE: The user email is {user.id}+{user.login}@users.noreply.github.com.
           # See users API: https://api.github.com/users/github-actions%5Bbot%5D
           git config user.name "github-actions[bot]"
@@ -184,10 +182,8 @@ jobs:
           fetch-tags: true
           # token: ${{ secrets.repo_PAT }}
 
-      - name: Setup
+      - name: Setup git
         run: |
-          git fetch origin master --depth 1
-
           # NOTE: The user email is {user.id}+{user.login}@users.noreply.github.com.
           # See users API: https://api.github.com/users/github-actions%5Bbot%5D
           git config user.name "github-actions[bot]"

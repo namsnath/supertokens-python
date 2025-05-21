@@ -35,10 +35,17 @@ jobs:
           fetch-tags: true
           # token: ${{ secrets.repo_PAT }}
 
+
+      - name: Setup git
+        run: |
+          # NOTE: The user email is {user.id}+{user.login}@users.noreply.github.com.
+          # See users API: https://api.github.com/users/github-actions%5Bbot%5D
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin master
       - name: Check if branch needs master merge
         run: |
-          git fetch origin master
-
           if [[ $(git log origin/master ^HEAD) != "" ]]; then
             echo "You need to merge master into this branch."
             exit 1
