@@ -37,10 +37,10 @@ jobs:
         run: |
           git fetch origin master
           git status
-          echo "[$(git log --oneline HEAD..master)]"
+          echo "[$(git log --oneline ${{ inputs.branch }}..origin/master)]"
           # echo "[$(git log master ^HEAD)]"
 
-          if [[ $(git log master ^HEAD) != "" ]]; then
+          if [[ $(git log origin/master ^HEAD) != "" ]]; then
             echo "You need to merge master into this branch."
             exit 1
           fi
