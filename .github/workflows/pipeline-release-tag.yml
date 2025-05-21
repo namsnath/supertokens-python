@@ -162,6 +162,9 @@ jobs:
 
           if [[ $response == "true" ]]
           then
+            git checkout master
+            git checkout ${{ inputs.branch }}
+
             git merge master
             git checkout master
             git merge ${{ inputs.branch }}
