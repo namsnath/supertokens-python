@@ -60,23 +60,58 @@ jobs:
       - setup
 
     steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          pip install httpx
+
       - name: Get commit status
         run: |
-          response=$(curl -sL\
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.repo_PAT }}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/${{ github.repository }}/commits/tags/${{ needs.setup.outputs.devTag }}/check-runs
-          )
+          python3 -c "$(cat << EOF
 
-          state=$(echo "$response" | jq .state)
-          echo $response
+          from collections import defaultdict
+          import httpx
+          import sys
 
-          if [[ $state != "success" ]]; then
-            echo "Some checks not passed, cannot release."
-            echo "Current state: $state"
-            exit 1
-          fi
+          url = "https://api.github.com/repos/${{ github.repository }}/commits/tags/${{ needs.setup.outputs.devTag }}/check-runs?per_page=100&page={page}"
+          page = 1
+          total = 0
+
+          status_map = defaultdict(int)
+          conclusion_map = defaultdict(int)
+
+          while True:
+            response = httpx.get(url.format(page=page)).json()
+
+            if len(response["check_runs"]) == 0:
+                break
+
+            for run_info in response["check_runs"]:
+                status_map[run_info["status"]] += 1
+                conclusion_map[run_info["conclusion"]] += 1
+                total += 1
+
+            page += 1
+
+          print(f"{total=}")
+          print(dict(status_map))
+          print(dict(conclusion_map))
+
+          if status_map["completed"] < total:
+              print("Some checks not completed.")
+              print(dict(status_map))
+              sys.exit(1)
+
+          if conclusion_map["success"] < total:
+              print("Some checks not successful.")
+              print(dict(conclusion_map))
+              sys.exit(1)
+
+          EOF
+          )"
 
       # - run: |
       #     curl --fail-with-body -X PATCH \
