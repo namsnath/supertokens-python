@@ -1,0 +1,76 @@
+name: Update docs
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: The branch to create the dev tag on
+        type: string
+        required: true
+#   push:
+#     branches:
+#       - master
+
+jobs:
+  update-docs:
+    name: Update docs
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: supertokens-python
+          token: ${{ secrets.repo_PAT }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: supertokens/supertokens-backend-website
+          path: supertokens-backend-website
+          token: ${{ secrets.repo_PAT }}
+
+      - name: Setup git
+        run: |
+          # NOTE: The user email is {user.id}+{user.login}@users.noreply.github.com.
+          # See users API: https://api.github.com/users/github-actions%5Bbot%5D
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - id: versions
+        working-directory: supertokens-python
+        run: |
+          . ./hooks/populate-hook-constants.sh
+
+          echo "constantsVersion=$constantsVersion" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
+          echo "constantsVersionXy=$constantsVersionXy" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
+          echo "setupVersion=$setupVersion" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
+          echo "setupVersionXy=$setupVersionXy" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
+          echo "newestVersion=$newestVersion" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
+          echo "targetBranch=$targetBranch" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
+
+          echo "devTag=dev-v$setupVersion" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
+          echo "releaseTag=v$setupVersion" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
+
+          echo "versionFolder=$setupVersionXy.X" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
+
+      - working-directory: supertokens-backend-website
+        run: |
+          mkdir -p ./app/docs/sdk/docs/python/${{ steps.versions.outputs.versionFolder }}
+
+      - working-directory: supertokens-python
+        run: |
+          cp html/supertokens_python/* ../supertokens-backend-website/app/docs/sdk/docs/python/
+          cp html/supertokens_python/* ../supertokens-backend-website/app/docs/sdk/docs/python/${{ steps.versions.outputs.versionFolder }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: python-docs
+          path: supertokens-backend-website/app/docs/sdk/docs/python/${{ steps.versions.outputs.versionFolder }}
+
+      # - name: Push to repo
+      #   working-directory: supertokens-backend-website
+      #   run: |
+      #     git add --all
+      #     git commit -m "update: python docs for ${{ steps.versions.outputs.releaseTag }}"
+      #     git pull
+      #     git push
+      #     ./releaseDev.sh
