@@ -12,31 +12,26 @@ on:
 #       - master
 
 jobs:
-  update-docs:
+  create-docs:
     name: Update docs
     runs-on: ubuntu-latest
 
+    outputs:
+      constantsVersion: ${{ steps.versions.outputs.constantsVersion }}
+      constantsVersionXy: ${{ steps.versions.outputs.constantsVersionXy }}
+      setupVersion: ${{ steps.versions.outputs.setupVersion }}
+      setupVersionXy: ${{ steps.versions.outputs.setupVersionXy }}
+      newestVersion: ${{ steps.versions.outputs.newestVersion }}
+      targetBranch: ${{ steps.versions.outputs.targetBranch }}
+      devTag: ${{ steps.versions.outputs.devTag }}
+      releaseTag: ${{ steps.versions.outputs.releaseTag }}
+      versionFolder: ${{ steps.versions.outputs.versionFolder }}
+      artifactName: ${{ steps.versions.outputs.artifactName }}
+
     steps:
       - uses: actions/checkout@v4
-        with:
-          path: supertokens-python
-          token: ${{ secrets.repo_PAT }}
-
-      # - uses: actions/checkout@v4
-      #   with:
-      #     repository: supertokens/supertokens-backend-website
-      #     path: supertokens-backend-website
-      #     token: ${{ secrets.repo_PAT }}
-
-      - name: Setup git
-        run: |
-          # NOTE: The user email is {user.id}+{user.login}@users.noreply.github.com.
-          # See users API: https://api.github.com/users/github-actions%5Bbot%5D
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - id: versions
-        working-directory: supertokens-python
         run: |
           . ./hooks/populate-hook-constants.sh
 
@@ -51,26 +46,22 @@ jobs:
           echo "releaseTag=v$setupVersion" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
 
           echo "versionFolder=$setupVersionXy.X" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
-
-      # - working-directory: supertokens-backend-website
-      #   run: |
-      #     mkdir -p ./app/docs/sdk/docs/python/${{ steps.versions.outputs.versionFolder }}
-
-      # - working-directory: supertokens-python
-      #   run: |
-      #     cp html/supertokens_python/* ../supertokens-backend-website/app/docs/sdk/docs/python/
-      #     cp html/supertokens_python/* ../supertokens-backend-website/app/docs/sdk/docs/python/${{ steps.versions.outputs.versionFolder }}
+          echo "artifactName=python-docs-$setupVersion" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: python-docs-${{ steps.versions.outputs.versionFolder }}
-          path: supertokens-python/html/supertokens_python
+          name: ${{ steps.versions.outputs.artifactName }}
+          path: html/supertokens_python
 
-      # - name: Push to repo
-      #   working-directory: supertokens-backend-website
-      #   run: |
-      #     git add --all
-      #     git commit -m "update: python docs for ${{ steps.versions.outputs.releaseTag }}"
-      #     git pull
-      #     git push
-      #     ./releaseDev.sh
+  publish-docs:
+    needs:
+      - create-docs
+
+    uses: supertokens/supertokens-backend-website/.github/workflows/release-python-documentation-changes.yml@feat/python-docs
+    secrets: inherit
+    with:
+      version: ${{ needs.create-docs.outputs.setupVersion }}
+      artifact-name: ${{ needs.create-docs.outputs.artifactName }}
+      version-folder: ${{ needs.create-docs.outputs.versionFolder }}
+      run-id: ${{ github.run_id }}
+      stage: preview
